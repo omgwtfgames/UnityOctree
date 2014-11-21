@@ -90,7 +90,7 @@ public class PointOctree<T> where T : class {
 
 	/// <summary>
 	/// Draws node boundaries visually for debugging.
-	/// Must be called from OnGrawGizmos externally. See also: DrawAllObjects.
+	/// Must be called from OnDrawGizmos externally. See also: DrawAllObjects.
 	/// </summary>
 	public void DrawAllBounds() {
 		rootNode.DrawAllBounds();
@@ -98,7 +98,7 @@ public class PointOctree<T> where T : class {
 
 	/// <summary>
 	/// Draws the bounds of all objects in the tree visually for debugging.
-	/// Must be called from OnGrawGizmos externally. See also: DrawAllBounds.
+	/// Must be called from OnDrawGizmos externally. See also: DrawAllBounds.
 	/// </summary>
 	public void DrawAllObjects() {
 		rootNode.DrawAllObjects();
