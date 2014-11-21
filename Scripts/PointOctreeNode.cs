@@ -93,17 +93,19 @@ public class PointOctreeNode<T> where T : class {
 	/// <param name="ray">The ray.</param>
 	/// <param name="maxDistance">Maximum distance from the ray to consider.</param>
 	/// <returns>Objects within range.</returns>
-	public T[] GetNearby(Ray ray, float maxDistance) {
+	public T[] GetNearby(Ray ray, float maxDistance, bool distanceIsSquared = false) {
 		// Does the ray hit this node at all?
 		if (!bounds.IntersectRay(ray)) {
 			return null;
 		}
 
+        if (!distanceIsSquared) maxDistance = maxDistance * maxDistance;
 		List<T> collidingWith = new List<T>();
 
 		// Check against any objects in this node
 		for (int i = 0; i < objects.Count; i++) {
-			if (DistanceToRay(ray, objects[i].Pos) <= maxDistance) {
+            if (DistanceToRaySqr(ray, objects[i].Pos) <= maxDistance)
+            {
 				collidingWith.Add(objects[i].Obj);
 			}
 		}
@@ -111,7 +113,7 @@ public class PointOctreeNode<T> where T : class {
 		// Check children
 		if (children != null) {
 			for (int i = 0; i < 8; i++) {
-				T[] childColliding = children[i].GetNearby(ray, maxDistance);
+                T[] childColliding = children[i].GetNearby(ray, maxDistance, true);
 				if (childColliding != null) collidingWith.AddRange(childColliding);
 			}
 		}
@@ -412,6 +414,7 @@ public class PointOctreeNode<T> where T : class {
 		return false;
 	}
 
+    /*
 	/// <summary>
 	/// Returns the closest distance to the given ray from a point.
 	/// </summary>
@@ -421,4 +424,17 @@ public class PointOctreeNode<T> where T : class {
 	public static float DistanceToRay(Ray ray, Vector3 point) {
 		return Vector3.Cross(ray.direction, point - ray.origin).magnitude;
 	}
+    */
+
+    /// <summary>
+    /// Returns the closest distance-squared to the given ray from a point.
+    /// A little more efficient than DistanceToRay
+    /// </summary>
+    /// <param name="ray">The ray.</param>
+    /// <param name="point">The point to check distance from the ray.</param>
+    /// <returns>Distance from the point to the closest point of the ray.</returns>
+    public static float DistanceToRaySqr(Ray ray, Vector3 point)
+    {
+        return Vector3.Cross(ray.direction, point - ray.origin).sqrMagnitude;
+    }
 }
